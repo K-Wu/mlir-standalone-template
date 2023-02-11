@@ -37,10 +37,10 @@ jobs:
           python .github/workflows/replace_commit_hash_in_yml.py ${{ env.LLVM_COMMIT_HASH }}
           git config --local user.email "github-actions@github.com"
           git config --local user.name "github-actions"
-          git checkout -b "gh_latest_llvm"
+          git checkout -b "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
           git add .
           git commit -m "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}"
-          git push origin "gh_latest_llvm"
-          gh pr create --title "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --body "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --base main --head "gh_latest_llvm"
+          git push origin "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
+          gh pr create --title "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --body "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --base main --head "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
