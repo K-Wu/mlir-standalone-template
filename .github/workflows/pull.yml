@@ -2,6 +2,15 @@ name: pull latest llvm project and create PR if updated
 
 on:
   workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Commit hash to pull'
+        required: true
+        default: '<commit hash>'
+      branch:
+        description: 'Branch to push to'
+        required: true
+        default: 'main'
 
 jobs:
   pull:
@@ -17,30 +26,31 @@ jobs:
         with:
           load-mode: strict
           path: 'mlir-standalone-template/'
-      - name: Get LLVM
+      - name: Get LLVM at the input branch and commit
         uses: actions/checkout@v2
         with:
           repository: 'llvm/llvm-project'
           path: 'llvm-project'
+          ref: ${{ github.event.inputs.branch }}/${{ github.event.inputs.commit }}
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
         run: |
-          echo "LLVM_COMMIT_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
+          echo "MLIR_EXAMPLE_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
       - name: Get template code commit hash by using .github/workflows/get_commit_hash_from_yml.py
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
           echo "TEMPLATE_COMMIT_HASH=$(python ./.github/workflows/get_commit_hash_from_yml.py)" >> $GITHUB_ENV
-      - name: Update if the two strings TEMPLATE_COMMIT_HASH and LLVM_COMMIT_HASH are different. push to the TEMPLATE_COMMIT_HASH branch. create pull request
-        if: env.TEMPLATE_COMMIT_HASH != env.LLVM_COMMIT_HASH
+      - name: Update if the two strings TEMPLATE_COMMIT_HASH and MLIR_EXAMPLE_HASH are different. push to the TEMPLATE_COMMIT_HASH branch. create pull request
+        if: env.TEMPLATE_COMMIT_HASH != env.MLIR_EXAMPLE_HASH
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
           cp -r $GITHUB_WORKSPACE/llvm-project/mlir/examples/standalone/* .
-          python .github/workflows/replace_commit_hash_in_yml.py ${{ env.LLVM_COMMIT_HASH }}
+          python .github/workflows/replace_commit_hash_in_yml.py ${{ env.MLIR_EXAMPLE_HASH }}
           git config --local user.email "github-actions@github.com"
           git config --local user.name "github-actions"
-          git checkout -b "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
+          git checkout -b "gh_latest_llvm${{ env.MLIR_EXAMPLE_HASH }}"
           git add .
-          git commit -m "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}"
-          git push origin "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
-          gh pr create --title "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --body "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --base main --head "gh_latest_llvm${{ env.LLVM_COMMIT_HASH }}"
+          git commit -m "Update to LLVM commit ${{ env.MLIR_EXAMPLE_HASH }}"
+          git push origin "gh_latest_llvm${{ env.MLIR_EXAMPLE_HASH }}"
+          gh pr create --title "Update to LLVM commit ${{ env.MLIR_EXAMPLE_HASH }}" --body "Update to LLVM commit ${{ env.MLIR_EXAMPLE_HASH }}" --base main --head "gh_latest_llvm${{ env.MLIR_EXAMPLE_HASH }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
