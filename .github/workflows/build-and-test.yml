@@ -2,15 +2,13 @@ name: Build and test
 
 on: [push, pull_request]
 
-env:
-  LLVM_COMMIT: ff4027d152d0d928540dbc19a41840a3a59ff23d
-  CMAKE_FLAGS: '-DCMAKE_LINKER=lld -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DMLIR_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/mlir/ -DLLVM_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/llvm/ -DLLVM_EXTERNAL_LIT=$GITHUB_WORKSPACE/llvm-project/build/bin/llvm-lit'
-
 jobs:
   lint:
     name: Check formatting
     runs-on: ubuntu-latest
     steps:
+      - name: dot env
+          uses: falti/dotenv-action
       - name: Get Template Code
         uses: actions/checkout@v2
       - name: clang-format
@@ -24,6 +22,8 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
+      - name: dot env
+          uses: falti/dotenv-action
       - name: Configure Environment
         run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
       - name: Get Template Code

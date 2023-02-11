@@ -3,14 +3,13 @@ name: pull latest llvm project and create PR if updated
 on:
   workflow_dispatch:
 
-env:
-  CMAKE_FLAGS: '-DCMAKE_LINKER=lld -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DMLIR_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/mlir/ -DLLVM_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/llvm/ -DLLVM_EXTERNAL_LIT=$GITHUB_WORKSPACE/llvm-project/build/bin/llvm-lit'
-
 jobs:
   pull:
     name: pull latest llvm project and create PR if updated
     runs-on: ubuntu-latest
     steps:
+      - name: dot env
+        uses: falti/dotenv-action
       - name: Get LLVM
         uses: actions/checkout@v2
         with:
