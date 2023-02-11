@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: dot env
-        uses: falti/dotenv-action@v1.0.2
+        uses: falti/dotenv-action@v1
       - name: Get Template Code
         uses: actions/checkout@v2
       - name: clang-format
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: dot env
-        uses: falti/dotenv-action@v1.0.2
+        uses: falti/dotenv-action@v1
       - name: Configure Environment
         run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
       - name: Get Template Code
