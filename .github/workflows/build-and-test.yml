@@ -7,10 +7,15 @@ jobs:
     name: Check formatting
     runs-on: ubuntu-latest
     steps:
+      - name: Get Template Code
+        uses: actions/checkout@v2
+        with:
+          path: 'mlir-standalone-template'
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
           load-mode: strict
+          path: 'mlir-standalone-template/.env'
       - name: Get Template Code
         uses: actions/checkout@v2
       - name: clang-format
@@ -24,16 +29,17 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
     steps:
-      - name: Load .env file
-        uses: xom9ikk/dotenv@v2
-        with:
-          load-mode: strict
-      - name: Configure Environment
-        run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
       - name: Get Template Code
         uses: actions/checkout@v2
         with:
           path: 'mlir-standalone-template'
+      - name: Load .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          load-mode: strict
+          path: 'mlir-standalone-template/.env'
+      - name: Configure Environment
+        run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
       - name: Cache LLVM
         id: cache-llvm
         uses: actions/cache@v2

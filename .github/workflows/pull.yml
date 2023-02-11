@@ -8,10 +8,15 @@ jobs:
     name: pull latest llvm project and create PR if updated
     runs-on: ubuntu-latest
     steps:
+      - name: checkout Template Code in a separate folder
+        uses: actions/checkout@v2
+        with:
+          path: 'mlir-standalone-template'
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
           load-mode: strict
+          path: 'mlir-standalone-template/.env'
       - name: Get LLVM
         uses: actions/checkout@v2
         with:
@@ -20,10 +25,6 @@ jobs:
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
         run: |
           echo "LLVM_COMMIT_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
-      - name: checkout Template Code in a separate folder
-        uses: actions/checkout@v2
-        with:
-          path: 'mlir-standalone-template'
       - name: Get template code commit hash by using .github/workflows/get_commit_hash_from_yml.py
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
