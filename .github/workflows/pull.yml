@@ -3,14 +3,10 @@ name: pull latest llvm project and create PR if updated
 on:
   workflow_dispatch:
     inputs:
-      commit:
-        description: 'Commit hash to pull'
+      ref:
+        description: 'Branch and Commit hash to pull'
         required: true
-        default: '<commit hash>'
-      branch:
-        description: 'Branch to push to'
-        required: true
-        default: 'main'
+        default: '<branch>/<commit hash>'
 
 jobs:
   pull:
@@ -31,7 +27,7 @@ jobs:
         with:
           repository: 'llvm/llvm-project'
           path: 'llvm-project'
-          ref: ${{ github.event.inputs.branch }}/${{ github.event.inputs.commit }}
+          ref: ${{ github.event.inputs.ref }}
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
         run: |
           echo "MLIR_EXAMPLE_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
