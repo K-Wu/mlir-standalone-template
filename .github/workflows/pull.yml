@@ -9,7 +9,9 @@ env:
 
 jobs:
   pull:
-    step:
+    name: pull latest llvm project and create PR if updated
+    runs-on: ubuntu-latest
+    steps:
       - name: Cache LLVM
         id: cache-llvm
         uses: actions/cache@v2
