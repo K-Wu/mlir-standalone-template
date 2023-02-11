@@ -6,7 +6,7 @@ on:
       ref:
         description: 'Branch and Commit hash to pull'
         required: true
-        default: '<branch>/<commit hash>'
+        default: 'e.g. refs/tags/llvm/15.0.7 or main'
 
 jobs:
   pull:
