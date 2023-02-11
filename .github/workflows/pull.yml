@@ -31,6 +31,7 @@ jobs:
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
         run: |
           echo "MLIR_EXAMPLE_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
+          echo "MLIR_TREE_HASH=$(cd llvm-project && git log --pretty=tformat:"%T" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
       - name: Get template code commit hash by using .github/workflows/get_commit_hash_from_yml.py
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
@@ -40,7 +41,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
           cp -r $GITHUB_WORKSPACE/llvm-project/mlir/examples/standalone/* .
-          python .github/workflows/replace_commit_hash_in_yml.py ${{ env.MLIR_EXAMPLE_HASH }}
+          python .github/workflows/replace_commit_hash_in_yml.py ${{ env.MLIR_TREE_HASH }}
           git config --local user.email "github-actions@github.com"
           git config --local user.name "github-actions"
           git checkout -b "gh_latest_llvm${{ env.MLIR_EXAMPLE_HASH }}"
