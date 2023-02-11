@@ -15,7 +15,7 @@ jobs:
         uses: xom9ikk/dotenv@v2
         with:
           load-mode: strict
-          path: 'mlir-standalone-template/.env'
+          path: 'mlir-standalone-template/'
       - name: Get Template Code
         uses: actions/checkout@v2
       - name: clang-format
@@ -37,7 +37,7 @@ jobs:
         uses: xom9ikk/dotenv@v2
         with:
           load-mode: strict
-          path: 'mlir-standalone-template/.env'
+          path: 'mlir-standalone-template/'
       - name: Configure Environment
         run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
       - name: Cache LLVM
