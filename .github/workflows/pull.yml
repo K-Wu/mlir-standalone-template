@@ -42,5 +42,5 @@ jobs:
           git commit -m "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}"
           git push origin "gh_latest_llvm"
           gh pr create --title "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --body "Update to LLVM commit ${{ env.LLVM_COMMIT_HASH }}" --base main --head "gh_latest_llvm"
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
