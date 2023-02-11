@@ -10,8 +10,6 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-          path: .env
-          mode: development
           load-mode: strict
       - name: Get Template Code
         uses: actions/checkout@v2
@@ -29,8 +27,6 @@ jobs:
       - name: Load .env file
         uses: xom9ikk/dotenv@v2
         with:
-          path: .env
-          mode: development
           load-mode: strict
       - name: Configure Environment
         run: echo "$GITHUB_WORKSPACE/llvm-project/prefix/bin" >> "$GITHUB_PATH"
