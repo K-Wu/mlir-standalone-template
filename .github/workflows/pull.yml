@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  LLVM_COMMIT: ff4027d152d0d928540dbc19a41840a3a59ff23d
   CMAKE_FLAGS: '-DCMAKE_LINKER=lld -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DMLIR_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/mlir/ -DLLVM_DIR=$GITHUB_WORKSPACE/llvm-project/prefix/lib/cmake/llvm/ -DLLVM_EXTERNAL_LIT=$GITHUB_WORKSPACE/llvm-project/build/bin/llvm-lit'
 
 jobs:
@@ -12,18 +11,10 @@ jobs:
     name: pull latest llvm project and create PR if updated
     runs-on: ubuntu-latest
     steps:
-      - name: Cache LLVM
-        id: cache-llvm
-        uses: actions/cache@v2
-        with:
-          path: llvm-project
-          key: ${{ runner.os }}-llvm-install-${{ env.LLVM_COMMIT }}
       - name: Get LLVM
-        if: steps.cache-llvm.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
         with:
           repository: 'llvm/llvm-project'
-          ref: '${{ env.LLVM_COMMIT }}'
           path: 'llvm-project'
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
         run: |
