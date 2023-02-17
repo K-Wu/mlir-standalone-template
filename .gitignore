@@ -1,4 +1,6 @@
 *.log
+*.pyc
+llvm-project/
 build/
 .clangd/
 .cache/
