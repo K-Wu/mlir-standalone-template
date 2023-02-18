@@ -1,4 +1,4 @@
-name: pull the specified llvm version, compile the mlir in it and publish it as a github artifact
+name: pull specified llvm, pub mlir binary produced by compiling it
 
 on:
   workflow_dispatch:

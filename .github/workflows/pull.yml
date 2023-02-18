@@ -1,4 +1,4 @@
-name: pull the specified llvm project version, extract the out-of-tree standlaone project from it, and create PR if updated
+name: pull specified llvm, upd standlaone project by extracting the code from llvm project, and create PR if updated
 
 on:
   workflow_dispatch:
