@@ -1,4 +1,4 @@
-name: pull latest llvm project and create PR if updated
+name: pull the specified llvm project version, extract the out-of-tree standlaone project from it, and create PR if updated
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
         default: 'e.g. refs/tags/llvmorg-15.0.6 or main'
 
 jobs:
-  pull:
+  pull_and_create_pr:
     name: pull latest llvm project and create PR if updated
     runs-on: ubuntu-latest
     steps:
