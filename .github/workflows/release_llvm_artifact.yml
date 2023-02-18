@@ -36,8 +36,10 @@ jobs:
           cd $GITHUB_WORKSPACE/llvm-project/build
           cmake $GITHUB_WORKSPACE/llvm-project/llvm -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLLVM_ENABLE_ASSERTIONS=ON -DLLVM_BUILD_EXAMPLES=OFF -DLLVM_TARGETS_TO_BUILD="host" -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/llvm-project/prefix -DLLVM_ENABLE_PROJECTS='mlir' -DLLVM_OPTIMIZED_TABLEGEN=ON -DLLVM_ENABLE_OCAMLDOC=OFF -DLLVM_ENABLE_BINDINGS=OFF -DLLVM_INSTALL_UTILS=ON -DLLVM_ENABLE_LLD=ON
           cmake --build . --target install -- -j$(nproc)
+      - name: remove forward slash and colon from the ref name, store it in an env variable
+        run: echo "REF_NAME=${{ github.event.inputs.ref }}" | sed 's/\///g' | sed 's/:/-/g' >> $GITHUB_ENV
       - name: compress the prefix folderr and publish it as a github artifact
         uses: actions/upload-artifact@v2
         with:
-          name: llvm-prefix-${{ github.event.inputs.ref }}
+          name: llvm-prefix-${{ env.REF_NAME }}
           path: llvm-project/prefix
