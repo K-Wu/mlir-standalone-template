@@ -43,3 +43,8 @@ jobs:
         with:
           name: llvm-prefix-${{ env.REF_NAME }}
           path: llvm-project/prefix
+      - name: compress the build folderr and publish it as a github artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: llvm-build-${{ env.REF_NAME }}
+          path: llvm-project/build
