@@ -17,6 +17,10 @@ def manual_clone_llvm_project(llvm_dir, ref):
 
 
 def manual_build_llvm_project(ref):
+    # TODO: add an option to choose whether to build python bindings
+    # To build python bindings, add the two flags specified in the documentation to the cmake command, e.g.:
+    # -DMLIR_ENABLE_BINDINGS_PYTHON=ON -DMLIR_INCLUDE_TESTS=ON -DPython3_EXECUTABLE=/home/kwu/anaconda3/envs/dev_mlir/bin/python3
+    # Notice that Python3_EXECUTABLE needs to be the same as the one used in run time. Otherwise ImportError (unknown location) will be thrown.
     os.system("mkdir llvm-project/build")
     os.system("mkdir llvm-project/prefix")
     os.chdir("llvm-project/build")
