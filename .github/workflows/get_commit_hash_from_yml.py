@@ -13,7 +13,7 @@ def ensure_executed_in_git_root():
     assert os.path.exists(".git")
     assert os.path.exists(".github")
     assert os.path.exists(".github/workflows")
-    assert os.path.exists(".github/workflows/manual_clone_llvm_project.py")
+    assert os.path.exists(".github/workflows/manual_build_this_repo_and_llvm.py")
     assert os.path.exists(".github/workflows/get_commit_hash_from_yml.py")
     assert os.path.exists(".github/workflows/replace_commit_hash_in_yml.py")
     assert os.path.exists(".github/workflows/build-and-test.yml")
