@@ -16,23 +16,34 @@ def manual_clone_llvm_project(llvm_dir, git_ref):
 
 
 
-def manual_build_llvm_project(git_ref, enable_mlir_python_bindings):
-    # TODO: add an option to choose whether to build python bindings
+def manual_build_llvm_project(git_ref, enable_mlir_python_bindings, enable_cuda_backend):
     # To build python bindings, add the two flags specified in the documentation to the cmake command, e.g.:
     # -DMLIR_ENABLE_BINDINGS_PYTHON=ON -DMLIR_INCLUDE_TESTS=ON -DPython3_EXECUTABLE=/home/kwu/anaconda3/envs/dev_mlir/bin/python3
     # Notice that Python3_EXECUTABLE needs to be the same as the one used in run time. Otherwise ImportError (unknown location) will be thrown.
     # https://mlir.llvm.org/docs/Bindings/Python/#building
 
+    if enable_cuda_backend and not enable_mlir_python_bindings:
+        enable_mlir_python_bindings = True
+        print("enable_mlir_python_bindings is set to True because enable_cuda_backend is True")
+
     os.system("mkdir llvm-project/build")
     os.system("mkdir llvm-project/prefix")
     os.chdir("llvm-project/build")
-    cmake_configure_command = "cmake ../llvm -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLLVM_ENABLE_ASSERTIONS=ON -DLLVM_BUILD_EXAMPLES=OFF -DLLVM_TARGETS_TO_BUILD=\"host\" -DCMAKE_INSTALL_PREFIX=../prefix -DLLVM_ENABLE_PROJECTS='mlir' -DLLVM_OPTIMIZED_TABLEGEN=ON -DLLVM_ENABLE_OCAMLDOC=OFF -DLLVM_ENABLE_BINDINGS=OFF -DLLVM_INSTALL_UTILS=ON -DLLVM_ENABLE_LLD=ON"
-    
+    cmake_configure_command = "cmake ../llvm -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DLLVM_ENABLE_ASSERTIONS=ON -DLLVM_BUILD_EXAMPLES=OFF -DCMAKE_INSTALL_PREFIX=../prefix -DLLVM_ENABLE_PROJECTS='mlir' -DLLVM_OPTIMIZED_TABLEGEN=ON -DLLVM_ENABLE_OCAMLDOC=OFF  -DLLVM_INSTALL_UTILS=ON -DLLVM_ENABLE_LLD=ON"
+    if enable_cuda_backend:
+        # reference: https://github.com/llvm/llvm-zorg/blob/9185b9aa01f1230dd9e2da9401ae49a43ed56b13/buildbot/osuosl/master/config/builders.py#L1448-L1476
+        cuda_compiler_path = os.popen("which nvcc").read().strip()
+        cmake_configure_command+=" -DLLVM_TARGETS_TO_BUILD=\"host;NVPTX\" -DMLIR_ENABLE_CUDA_RUNNER=1 -DMLIR_INCLUDE_INTEGRATION_TESTS=ON -DMLIR_ENABLE_VULKAN_RUNNER=1 -DBUILD_SHARED_LIBS=ON -DLLVM_CCACHE_BUILD=ON  -DMLIR_RUN_CUDA_TENSOR_CORE_TESTS=ON -DLLVM_LIT_ARGS=-v -vv -DCMAKE_CUDA_COMPILER={cuda_compiler_path}".format(cuda_compiler_path=cuda_compiler_path)
+    else:
+        cmake_configure_command+=" -DLLVM_TARGETS_TO_BUILD=\"host\""
     if enable_mlir_python_bindings:
         # get python3 executable path by executing which python3
         python3_executable_path = os.popen("which python3").read().strip()
 
         cmake_configure_command += " -DMLIR_ENABLE_BINDINGS_PYTHON=ON -DMLIR_INCLUDE_TESTS=ON -DPython3_EXECUTABLE={python3_executable_path}".format(python3_executable_path=python3_executable_path)
+    else:
+        cmake_configure_command+=" -DLLVM_ENABLE_BINDINGS=OFF"
+
     os.system(cmake_configure_command)
     os.system("cmake --build . --target install")
     os.chdir("../..")
@@ -81,5 +92,5 @@ if __name__ == "__main__":
             os.system("mv llvm-project2 llvm-project")
     else:
         manual_clone_llvm_project("llvm-project", git_ref)
-    manual_build_llvm_project(git_ref, enable_mlir_python_bindings=False)
+    manual_build_llvm_project(git_ref, enable_mlir_python_bindings=True, enable_cuda_backend=True)
     manual_release_build()

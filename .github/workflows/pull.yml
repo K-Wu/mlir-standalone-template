@@ -29,18 +29,18 @@ jobs:
           path: 'llvm-project'
           ref: ${{ github.event.inputs.ref }}
       - name: Set environment variable llvm commit hash in llvm-project/mlir/examples/standalone/
-        run: |
+        run: | # hash of the latest commit to pull
           echo "MLIR_EXAMPLE_HASH=$(cd llvm-project && git log --pretty=tformat:"%H" -n1 ./mlir/examples/standalone/)" >> $GITHUB_ENV
       - name: Get template code commit hash by using .github/workflows/get_commit_hash_from_yml.py
-        run: |
+        run: | # branch/tag name or hash of the commit of this current repo
           cd $GITHUB_WORKSPACE/mlir-standalone-template
           echo "TEMPLATE_COMMIT_HASH=$(python ./.github/workflows/get_commit_hash_from_yml.py)" >> $GITHUB_ENV
       - name: Update if the two strings TEMPLATE_COMMIT_HASH and MLIR_EXAMPLE_HASH are different. push to the TEMPLATE_COMMIT_HASH branch. create pull request
-        if: env.TEMPLATE_COMMIT_HASH != env.MLIR_EXAMPLE_HASH
+        if: env.TEMPLATE_COMMIT_HASH != env.MLIR_EXAMPLE_HASH # TODO: check if the case where TEMPLATE_COMMIT_HASH is branch name can be correctly handled (tag name is fine now)
         run: |
           cd $GITHUB_WORKSPACE/mlir-standalone-template
           cp -r $GITHUB_WORKSPACE/llvm-project/mlir/examples/standalone/* .
-          python .github/workflows/replace_commit_hash_in_yml.py ${{ github.event.inputs.ref }}
+          python .github/workflows/replace_commit_hash_in_yml.py ${{ github.event.inputs.ref }} ${{ env.MLIR_EXAMPLE_HASH }}
           git config --local user.email "github-actions@github.com"
           git config --local user.name "github-actions"
           git checkout -b "gh_latest_llvm${{ env.MLIR_EXAMPLE_HASH }}"

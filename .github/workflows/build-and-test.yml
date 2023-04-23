@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: llvm-project
-          key: ${{ runner.os }}-llvm-install-${{ env.LLVM_COMMIT }}
+          key: ${{ runner.os }}-llvm-install-${{ env.LLVM_COMMIT }} # TODO: need to make sure LLVM_COMMIT is always a hash (not a branch name or tag name)
       - name: Get LLVM
         if: steps.cache-llvm.outputs.cache-hit != 'true'
         uses: actions/checkout@v2
